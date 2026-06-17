@@ -1,0 +1,482 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#fff;}
+.wrap{max-width:1400px;margin:0 auto;padding:20px clamp(16px,3vw,48px) 32px;}
+.header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;}
+.header h1{font-size:16px;font-weight:500;}
+.header small{font-size:11px;color:#777;}
+.fx{display:inline-flex;align-items:center;gap:10px;background:#f4f4f4;border-radius:8px;padding:6px 14px;margin-bottom:20px;}
+.fx label{font-size:11px;color:#777;}
+.fx input{width:62px;font-size:12px;padding:4px 7px;border:1.5px solid #ccc;border-radius:5px;background:#fff;color:#1a1a1a;font-family:inherit;}
+.fx-val{font-size:12px;color:#1a6fc4;font-weight:500;}
+.fx-btn{font-size:11px;padding:4px 9px;border:1px solid #ccc;border-radius:5px;background:#fff;color:#555;cursor:pointer;}
+.fx-btn:hover{background:#f0f0f0;}
+.fx-status{font-size:10px;color:#aaa;}
+.tabs{display:flex;border-bottom:1px solid #e0e0e0;margin-bottom:24px;}
+.tab{padding:8px 16px;font-size:12px;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.tab:hover{color:#1a1a1a;}
+.tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:500;}
+.panel{display:none;}.panel.on{display:block;}
+.slabel{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#999;margin:24px 0 10px;}
+.slabel:first-child{margin-top:0;}
+
+/* War surcharge banner */
+.war-banner{display:flex;align-items:center;gap:12px;background:#fff3cd;border:1px solid #ffe082;border-radius:8px;padding:10px 14px;margin-bottom:20px;flex-wrap:wrap;}
+.war-banner strong{font-size:12px;color:#7a5500;}
+.war-banner span{font-size:11px;color:#7a5500;}
+.war-toggle{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.war-toggle label{font-size:11px;color:#7a5500;font-weight:500;cursor:pointer;}
+.war-toggle input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:#d4a800;}
+
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px;}
+.sim-field{display:flex;flex-direction:column;gap:5px;}
+.sim-field label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#666;}
+.sim-field select,
+.sim-field input[type=number]{font-size:13px;padding:9px 11px;border:1.5px solid #bbb;border-radius:6px;background:#f7f7f7;color:#1a1a1a;font-family:inherit;width:100%;}
+.sim-field select:hover,.sim-field input[type=number]:hover{border-color:#888;}
+.sim-field select:focus,.sim-field input[type=number]:focus{outline:none;border-color:#1a6fc4;background:#fff;box-shadow:0 0 0 3px rgba(26,111,196,.10);}
+
+.palier-tag{display:inline-block;font-size:12px;font-weight:500;padding:5px 14px;border-radius:999px;}
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:4px;}
+.metric{background:#f4f4f4;border-radius:8px;padding:12px 14px;}
+.metric-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-bottom:5px;}
+.metric-val{font-size:17px;font-weight:500;color:#1a1a1a;}
+.metric-eur{font-size:11px;color:#1a6fc4;margin-top:2px;}
+.metric.big{background:#dbeeff;}
+.metric.big .metric-val{font-size:22px;color:#1a4f8a;}
+.metric.big .metric-eur{font-size:13px;color:#1a4f8a;}
+.metric.war{background:#fff3cd;}
+.metric.war .metric-val{color:#7a5500;}
+.metric.war .metric-eur{color:#7a5500;}
+
+.palier-group{margin-bottom:22px;}
+.palier-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;}
+.palier-price{font-size:20px;font-weight:500;}
+.palier-sub{font-size:12px;color:#777;}
+.palier-eur{font-size:12px;color:#1a6fc4;}
+.palier-rows{display:flex;flex-direction:column;gap:5px;}
+.palier-row{display:flex;align-items:center;gap:10px;}
+.palier-cat{font-size:11px;font-weight:500;min-width:90px;}
+.bar-track{flex:1;height:5px;background:#eee;border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;}
+.palier-qty{font-size:11px;font-weight:500;min-width:55px;text-align:right;}
+.palier-refs{font-size:10px;color:#aaa;min-width:100px;}
+.palier-title{font-size:10px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;}
+
+.rate-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px;}
+.rate-card{background:#f4f4f4;border-radius:8px;padding:10px 12px;}
+.rate-label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.rate-val{font-size:14px;font-weight:500;}
+.rate-eur{font-size:11px;color:#1a6fc4;margin-top:1px;}
+.rate-range{font-size:10px;color:#bbb;margin-top:2px;}
+
+table{width:100%;border-collapse:collapse;}
+th,td{padding:7px 10px;text-align:right;font-size:12px;border-bottom:1px solid #eee;}
+th{font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#999;background:#f7f7f7;}
+th.l,td.l{text-align:left;}
+td.muted{color:#888;}
+td.gbp{font-weight:500;}
+td.eur{color:#1a6fc4;font-size:11px;}
+td.g{color:#2a7a2a;font-weight:500;}
+td.r{color:#b92020;font-weight:500;}
+tr:last-child td{border-bottom:none;}
+tr.strong td{font-weight:500;border-top:1px solid #ccc;}
+
+.badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:999px;vertical-align:middle;margin-left:4px;}
+.b-inv{background:#d4edda;color:#1a6b2a;}
+.b-qt{background:#d0e8ff;color:#1a4f8a;}
+.b-fx{background:#eee;color:#666;}
+.b-7{background:#fff3cd;color:#7a5500;}
+
+.insight{margin-top:20px;padding:10px 14px;background:#fff8e1;border-radius:8px;font-size:11px;color:#7a5500;line-height:1.6;border:1px solid #ffe082;}
+
+.import-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.import-field{display:flex;flex-direction:column;gap:4px;}
+.import-field label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#666;}
+.import-field input,.import-field select{font-size:12px;padding:7px 9px;border:1.5px solid #bbb;border-radius:6px;background:#f7f7f7;color:#1a1a1a;font-family:inherit;width:100%;}
+.add-btn{font-size:12px;padding:8px 20px;border:1px solid #2a7a2a;border-radius:6px;background:#d4edda;color:#1a5a1a;cursor:pointer;font-family:inherit;font-weight:500;}
+.add-btn:hover{background:#c3e0c8;}
+.msg{font-size:11px;color:#888;margin-top:8px;font-style:italic;}
+</style>
+
+<div class="wrap">
+<div class="header">
+  <h1>Base tarifaire — AGR Manufacturing</h1>
+  <small id="doc-count"></small>
+</div>
+<div class="fx">
+  <label>GBP → EUR</label>
+  <input type="number" id="fx-input" value="1.18" step="0.001" oninput="onFxChange()">
+  <span class="fx-val" id="fx-display">1 £ = 1.18 €</span>
+  <button class="fx-btn" onclick="fetchFx()">↻ Live</button>
+  <span class="fx-status" id="fx-status"></span>
+</div>
+
+<!-- War surcharge banner -->
+<div class="war-banner">
+  <strong>⚠ Surcharge GZ/AGR — guerre Hormuz</strong>
+  <span>+£0.09/u (+€0.106/u) sur tout pressage livré à partir du 1er août 2026</span>
+  <div class="war-toggle">
+    <input type="checkbox" id="war-check" onchange="calcSim()">
+    <label for="war-check">Appliquer dans le simulateur</label>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="sw('sim')">Simulateur</div>
+  <div class="tab" onclick="sw('paliers')">Paliers pressage</div>
+  <div class="tab" onclick="sw('rates')">Tarifs unitaires</div>
+  <div class="tab" onclick="sw('releases')">Par release</div>
+  <div class="tab" onclick="sw('invoices')">Factures</div>
+  <div class="tab" onclick="sw('import')">Ajouter</div>
+</div>
+
+<div class="panel on" id="panel-sim"></div>
+<div class="panel" id="panel-paliers"></div>
+<div class="panel" id="panel-rates"></div>
+<div class="panel" id="panel-releases"></div>
+<div class="panel" id="panel-invoices"></div>
+<div class="panel" id="panel-import"></div>
+</div>
+
+<script>
+let FX=1.18;
+const WAR_SURCHARGE=0.09; // £/u
+const fe=n=>'€'+(n*FX).toFixed(2);
+const fpu=n=>{const v=Number(n);return '£'+v.toFixed(v<0.5?3:2).replace(/\.?0+$/,'')+'/u';};
+const epu=n=>{const v=Number(n)*FX;return '€'+v.toFixed(v<0.5?3:2).replace(/\.?0+$/,'')+'/u';};
+const f2=n=>'£'+Number(n).toFixed(2);
+function onFxChange(){FX=parseFloat(document.getElementById('fx-input').value)||1.18;document.getElementById('fx-display').textContent='1 £ = '+FX.toFixed(3)+' €';rerender();}
+async function fetchFx(){
+  document.getElementById('fx-status').textContent='…';
+  try{const r=await fetch('https://api.frankfurter.app/latest?from=GBP&to=EUR');
+    const d=await r.json();FX=d.rates.EUR;
+    document.getElementById('fx-input').value=FX.toFixed(4);
+    document.getElementById('fx-display').textContent='1 £ = '+FX.toFixed(4)+' €';
+    document.getElementById('fx-status').textContent='✓ live';rerender();
+  }catch(e){document.getElementById('fx-status').textContent='erreur';}
+}
+
+const TITLES={'CAP114':'Sarah Maison – Divad','CAP119':'Mélanie Pain – How & Why','CAP120':'Capitane Records 5 Years Compilation','CAP122LP':'Whoman – About Honey','CAP142LP':'Adam Green – Chop Off Heads','CAP143LP':'Turner Cody – Out for Blood','CAP155LP':'Fervents – Service For The Sick','VE08LP':'ML – Tout Bas','VE13LP':'Aurel – Tant qu\'on aura pied','LDDC007':'Passion Panda – Canis Lupus','LDDC0007':'Passion Panda – Canis Lupus','LDDC0008':'Le Vrai Nick Cave (45t)'};
+const T=cat=>TITLES[cat]||'';
+
+const ALL=[
+  {ref:'i28161',type:'inv',date:'',fmt:'12',cat:'CAP114',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28269',type:'inv',date:'',fmt:'12',cat:'CAP120',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28316',type:'inv',date:'',fmt:'12',cat:'CAP119',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28485',type:'inv',date:'12/2025',fmt:'12',cat:'CAP142LP',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28486',type:'inv',date:'12/2025',fmt:'12',cat:'CAP143LP',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:0,delivery:0},extra:0,total:396},
+  {ref:'i28519',type:'inv',date:'',fmt:'12',cat:'CAP122LP',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28561',type:'inv',date:'',fmt:'12',cat:'VE08LP',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28579',type:'inv',date:'',fmt:'12',cat:'LDDC0007',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:0},extra:0,total:431},
+  {ref:'i28661',type:'inv',date:'04/2026',fmt:'7',cat:'LDDC0008',qty:0,r:{press:0,label:0,inner:0,sleeve:0,pack:0,shrink:0,energy:0,varnish:0,sticker:0},f:{master:160,metal:100,tests:25,testDel:35,delivery:0},extra:0,total:320},
+  {ref:'i28212',type:'inv',date:'',fmt:'12',cat:'CAP114',qty:119,r:{press:0.97,label:0.20,inner:0.50,sleeve:0.795,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:55},extra:0,total:380.47},
+  {ref:'i28213',type:'inv',date:'',fmt:'12',cat:'CAP114',qty:400,r:{press:0.97,label:0.20,inner:0.50,sleeve:0.795,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:77},extra:0,total:1171},
+  {ref:'i28297',type:'inv',date:'',fmt:'12',cat:'CAP120',qty:329,r:{press:1.25,label:0.32,inner:0.15,sleeve:1.15,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0.32},f:{master:0,metal:0,tests:0,testDel:0,delivery:85},extra:0,total:1223.34},
+  {ref:'i28393',type:'inv',date:'',fmt:'12',cat:'CAP119',qty:1499,r:{press:0.88,label:0.13,inner:0.30,sleeve:0.544,pack:0.10,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:249},extra:0,total:3582.78},
+  {ref:'i28394',type:'inv',date:'',fmt:'12',cat:'CAP119',qty:395,r:{press:0.88,label:0.13,inner:0.30,sleeve:0.544,pack:0.10,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:68},extra:0,total:946.48},
+  {ref:'i28401',type:'inv',date:'',fmt:'12',cat:'CAP119',qty:200,r:{press:0.88,label:0.13,inner:0.30,sleeve:0.544,pack:0.10,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:65},extra:0,total:509.80},
+  {ref:'i28528',type:'inv',date:'01/2026',fmt:'12',cat:'CAP142LP',qty:320,r:{press:0.97,label:0.20,inner:0.60,sleeve:0.795,pack:0.05,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:50},extra:0,total:973.20},
+  {ref:'i28529',type:'inv',date:'01/2026',fmt:'12',cat:'CAP143LP',qty:349,r:{press:0.97,label:0.18,inner:0.15,sleeve:0.795,pack:0.05,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:50},extra:0,total:892.84},
+  {ref:'i28530',type:'inv',date:'01/2026',fmt:'12',cat:'CAP142LP',qty:400,r:{press:0.97,label:0.20,inner:0.60,sleeve:0.795,pack:0.05,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:85},extra:0,total:1239},
+  {ref:'i28531',type:'inv',date:'01/2026',fmt:'12',cat:'CAP143LP',qty:400,r:{press:0.97,label:0.18,inner:0.15,sleeve:0.795,pack:0.05,shrink:0.14,energy:0.08,varnish:0.05,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:85},extra:0,total:1051},
+  {ref:'i28592',type:'inv',date:'03/2026',fmt:'12',cat:'CAP122LP',qty:549,r:{press:0.97,label:0.20,inner:0.50,sleeve:0.83,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:106},extra:0,total:1626.73},
+  {ref:'i28643',type:'inv',date:'04/2026',fmt:'12',cat:'VE08LP',qty:200,r:{press:0.97,label:0.20,inner:0.50,sleeve:0.83,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0.33},f:{master:0,metal:0,tests:0,testDel:0,delivery:84},extra:0,total:704},
+  {ref:'i28660',type:'inv',date:'04/2026',fmt:'12',cat:'LDDC007',qty:270,r:{press:1.25,label:0.32,inner:0.08,sleeve:1.17,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:78},extra:0,total:912.30},
+  {ref:'i28686',type:'inv',date:'04/2026',fmt:'12',cat:'VE08LP',qty:319,r:{press:0.97,label:0.20,inner:0.50,sleeve:0.83,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0.33},f:{master:0,metal:0,tests:0,testDel:0,delivery:72},extra:0,total:1060.90},
+  {ref:'i28704',type:'inv',date:'05/2026',fmt:'7',cat:'LDDC0008',qty:274,r:{press:0.95,label:0.32,inner:0.08,sleeve:0.90,pack:0.05,shrink:0.14,energy:0.08,varnish:0,sticker:0},f:{master:0,metal:0,tests:0,testDel:0,delivery:68},extra:0,total:758.48},
+  {ref:'AGRQ22769',type:'quote',date:'05/2026',fmt:'12',cat:'VE13LP',qty:300,r:{press:1.25,label:0.32,inner:0.08,sleeve:1.20,pack:0.05,shrink:0.15,energy:0.08,varnish:0,sticker:0.52},f:{master:212,metal:159,tests:25,testDel:35,delivery:90},extra:0,total:1616},
+  {ref:'AGRQ22770',type:'quote',date:'05/2026',fmt:'12',cat:'CAP155LP',qty:500,r:{press:1.02,label:0.22,inner:0.50,sleeve:1.20,pack:0.05,shrink:0.15,energy:0.08,varnish:0,sticker:0.52},f:{master:212,metal:159,tests:25,testDel:35,delivery:130},extra:400,total:2681},
+];
+
+function varT(d){return Object.values(d.r).reduce((a,b)=>a+b,0)*d.qty;}
+function fixT(d){return Object.values(d.f).reduce((a,b)=>a+b,0)+(d.extra||0);}
+function getReleases(){
+  const map={};
+  ALL.filter(d=>d.qty>0&&d.r.press>0).forEach(d=>{
+    if(!map[d.cat])map[d.cat]={cat:d.cat,fmt:d.fmt,refs:[],qty:0,press:d.r.press};
+    map[d.cat].refs.push(d.ref);map[d.cat].qty+=d.qty;
+  });
+  return Object.values(map).sort((a,b)=>a.press-b.press||b.qty-a.qty);
+}
+function pressRate(fmt,qty){
+  if(fmt==='7')return 0.95;
+  if(qty>=1500)return 0.88;
+  if(qty>=500)return 0.97;
+  return 1.25;
+}
+function warOn(){return document.getElementById('war-check')&&document.getElementById('war-check').checked;}
+
+// ── SIMULATEUR ──
+function renderSim(){
+  document.getElementById('panel-sim').innerHTML=`
+  <div class="sim-grid">
+    <div class="sim-field"><label>Format</label>
+      <select id="s-fmt" onchange="calcSim()"><option value="12">12"</option><option value="7">7"</option></select></div>
+    <div class="sim-field"><label>Quantité totale release</label>
+      <input type="number" id="s-qty" value="500" oninput="calcSim()"></div>
+    <div class="sim-field"><label>Inner bag</label>
+      <select id="s-inner" onchange="calcSim()">
+        <option value="0.08">Papier blanc — £0.08</option>
+        <option value="0.15">Papier noir — £0.15</option>
+        <option value="0.50">Artgloss imprimé — £0.50</option>
+        <option value="0.60">Imprimé matt — £0.60</option>
+      </select></div>
+    <div class="sim-field"><label>Pochette</label>
+      <select id="s-sleeve" onchange="calcSim()">
+        <option value="0.83">350GSM matt — £0.83</option>
+        <option value="0.795">300GSM gloss — £0.795</option>
+        <option value="0.90">300GSM 7" — £0.90</option>
+      </select></div>
+    <div class="sim-field"><label>Labels</label>
+      <select id="s-label" onchange="calcSim()">
+        <option value="0.20">CMYK couleur — £0.20</option>
+        <option value="0.18">1/0 noir — £0.18</option>
+      </select></div>
+    <div class="sim-field"><label>Sticker</label>
+      <select id="s-sticker" onchange="calcSim()">
+        <option value="0">Non</option>
+        <option value="0.33">Oui — £0.33</option>
+      </select></div>
+    <div class="sim-field"><label>Matt varnish</label>
+      <select id="s-varnish" onchange="calcSim()">
+        <option value="0">Non</option>
+        <option value="0.05">Oui — £0.05</option>
+      </select></div>
+    <div class="sim-field"><label>Die-cut sleeve</label>
+      <select id="s-diecut" onchange="calcSim()">
+        <option value="0">Non</option>
+        <option value="400">Oui — £400 fixe</option>
+      </select></div>
+    <div class="sim-field"><label>Livraison (£)</label>
+      <input type="number" id="s-del" value="85" oninput="calcSim()"></div>
+    <div class="sim-field"><label>Inclure fixes</label>
+      <select id="s-fixed" onchange="calcSim()">
+        <option value="yes">Oui — mastering + metalwork + tests</option>
+        <option value="no">Non — pressage seul</option>
+      </select></div>
+  </div>
+  <div id="sim-result"></div>`;
+  calcSim();
+}
+
+function calcSim(){
+  const el=id=>document.getElementById(id);
+  if(!el('s-fmt'))return;
+  const fmt=el('s-fmt').value;
+  const qty=parseInt(el('s-qty').value)||300;
+  const press=pressRate(fmt,qty);
+  const inner=parseFloat(el('s-inner').value)||0;
+  const sleeve=parseFloat(el('s-sleeve').value)||0;
+  const lbl=parseFloat(el('s-label').value)||0;
+  const sticker=parseFloat(el('s-sticker').value)||0;
+  const varnish=parseFloat(el('s-varnish').value)||0;
+  const diecut=parseFloat(el('s-diecut').value)||0;
+  const del=parseFloat(el('s-del').value)||85;
+  const incFixed=el('s-fixed').value==='yes';
+  const war=warOn()?WAR_SURCHARGE:0;
+  const pack=0.05,shrink=0.14,energy=0.08;
+  const pu=press+lbl+inner+sleeve+pack+shrink+energy+varnish+sticker+war;
+  const vt=pu*qty;
+  const mf=fmt==='7'?160:212,mw=fmt==='7'?100:159;
+  const ft=incFixed?(mf+mw+25+35):0;
+  const total=vt+ft+del+diecut;
+  const pColor=press<=0.88?{bg:'#d4edda',fg:'#1a5a1a'}:press<=0.97?{bg:'#dbeeff',fg:'#1a4f8a'}:{bg:'#fde8e8',fg:'#8a1a1a'};
+  const plbl=press===0.88?'Palier A — £0.88/u (≥ 1500 ex.)':press===0.97?'Palier B — £0.97/u (500–1499 ex.)':press===0.95?'7" — £0.95/u':'Palier C — £1.25/u (≤ 499 ex.)';
+  el('sim-result').innerHTML=`
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <span class="palier-tag" style="background:${pColor.bg};color:${pColor.fg};">${plbl}</span>
+    <span style="font-size:11px;color:#888;">pour ${qty.toLocaleString()} ex.</span>
+    ${diecut>0?`<span class="palier-tag" style="background:#fff3cd;color:#7a5500;">+ die-cut £400</span>`:''}
+    ${war>0?`<span class="palier-tag" style="background:#fff3cd;color:#7a5500;">+ surcharge guerre £0.09/u</span>`:''}
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Pressage / u</div><div class="metric-val">${fpu(press)}</div><div class="metric-eur">${epu(press)}</div></div>
+    ${war>0?`<div class="metric war"><div class="metric-label">Surcharge guerre / u</div><div class="metric-val">£0.09</div><div class="metric-eur">≈ ${fe(0.09)}</div></div>`:''}
+    <div class="metric"><div class="metric-label">Variable / u</div><div class="metric-val">${f2(pu)}</div><div class="metric-eur">${fe(pu)}</div></div>
+    <div class="metric"><div class="metric-label">Variables total</div><div class="metric-val">${f2(vt)}</div><div class="metric-eur">${fe(vt)}</div></div>
+    <div class="metric"><div class="metric-label">Fixes</div><div class="metric-val">${f2(ft)}</div><div class="metric-eur">${fe(ft)}</div></div>
+    ${diecut>0?`<div class="metric"><div class="metric-label">Die-cut</div><div class="metric-val">${f2(diecut)}</div><div class="metric-eur">${fe(diecut)}</div></div>`:''}
+    <div class="metric"><div class="metric-label">Livraison</div><div class="metric-val">${f2(del)}</div><div class="metric-eur">${fe(del)}</div></div>
+    <div class="metric big"><div class="metric-label">Total</div><div class="metric-val">${f2(total)}</div><div class="metric-eur">${fe(total)}</div></div>
+    <div class="metric"><div class="metric-label">Prix / u tout compris</div><div class="metric-val">${f2(total/qty)}</div><div class="metric-eur">${fe(total/qty)}</div></div>
+  </div>`;
+}
+
+// ── PALIERS ──
+function renderPaliers(){
+  const rels=getReleases();
+  const PALIERS=[
+    {press:0.88,label:'≥ 1500 ex.',fg:'#1a5a1a',bg:'#3B6D11'},
+    {press:0.97,label:'500 – 1499 ex.',fg:'#1a4f8a',bg:'#185FA5'},
+    {press:1.02,label:'500 ex. avec die-cut',fg:'#7a5500',bg:'#854F0B'},
+    {press:1.25,label:'≤ 499 ex.',fg:'#8a1a1a',bg:'#A32D2D'},
+    {press:0.95,label:'7" standard',fg:'#5a3a00',bg:'#6B3E00'},
+  ];
+  let h='<p style="font-size:11px;color:#888;margin-bottom:20px;">Quantités totales par release — plusieurs factures peuvent correspondre à la même commande livrée en plusieurs fois.</p>';
+  PALIERS.forEach(p=>{
+    const group=rels.filter(r=>r.press===p.press);
+    if(!group.length)return;
+    h+=`<div class="palier-group"><div class="palier-head">
+      <span class="palier-price" style="color:${p.fg};">${fpu(p.press)}</span>
+      <span class="palier-sub">${p.label}</span>
+      <span class="palier-eur">${epu(p.press)}</span>
+    </div><div class="palier-rows">`;
+    group.forEach(r=>{
+      const pct=Math.min(Math.round(r.qty/2200*100),100);
+      h+=`<div class="palier-row">
+        <span class="palier-cat">${r.cat}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(pct,2)}%;background:${p.bg};opacity:.75;"></div></div>
+        <span class="palier-qty">${r.qty.toLocaleString()} ex.</span>
+        <span class="palier-refs">${r.refs.join(', ')}</span>
+        <span class="palier-title">${T(r.cat)}</span>
+      </div>`;
+    });
+    h+='</div></div>';
+  });
+  h+=`<div class="insight">
+    <strong>Paliers estimés :</strong> £1.25 (≤ 499 ex.) → £0.97 (500–1499 ex.) → £0.88 (≥ 1500 ex.)<br>
+    <strong>Surcharge guerre (août 2026+) :</strong> +£0.09/u sur tout pressage (GZ via AGR) — temporaire, réévaluée trimestriellement.
+  </div>`;
+  document.getElementById('panel-paliers').innerHTML=h;
+}
+
+// ── TARIFS ──
+function renderRates(){
+  const inv12=ALL.filter(d=>d.type==='inv'&&d.fmt==='12'&&d.qty>0);
+  const ITEMS=[{k:'press',l:'Pressage 12"'},{k:'label',l:'Labels'},{k:'inner',l:'Inner bag'},{k:'sleeve',l:'Pochette'},{k:'pack',l:'Packing'},{k:'shrink',l:'Shrinkwrap'},{k:'energy',l:'Energy'},{k:'varnish',l:'Matt varnish'},{k:'sticker',l:'Sticker + appli'}];
+  let h=`<div class="slabel">Tarifs unitaires 12" — base historique</div><div class="rate-grid">`;
+  ITEMS.forEach(item=>{
+    const vals=inv12.map(d=>d.r[item.k]).filter(v=>v>0);
+    if(!vals.length)return;
+    const mn=Math.min(...vals),mx=Math.max(...vals);
+    const last=inv12.filter(d=>d.r[item.k]>0).slice(-1)[0].r[item.k];
+    h+=`<div class="rate-card"><div class="rate-label">${item.l}</div><div class="rate-val">${fpu(last)}</div><div class="rate-eur">${epu(last)}</div>${mn!==mx?`<div class="rate-range">obs. ${fpu(mn)} – ${fpu(mx)}</div>`:''}</div>`;
+  });
+  h+=`<div class="rate-card" style="border:1px solid #ffe082;"><div class="rate-label" style="color:#7a5500;">Die-cut sleeve</div><div class="rate-val">£400</div><div class="rate-eur">${fe(400)}</div><div class="rate-range">Fixe si pochette découpée</div></div>`;
+  h+=`<div class="rate-card" style="border:1px solid #ffe082;background:#fffbf0;"><div class="rate-label" style="color:#7a5500;">⚠ Surcharge guerre</div><div class="rate-val" style="color:#7a5500;">+£0.09/u</div><div class="rate-eur" style="color:#7a5500;">≈ +${fe(0.09)}/u</div><div class="rate-range">À partir du 1er août 2026</div></div>`;
+  h+='</div>';
+  const inv7=ALL.filter(d=>d.type==='inv'&&d.fmt==='7'&&d.qty>0);
+  if(inv7.length){
+    h+=`<div class="slabel">Tarifs unitaires 7"</div><div class="rate-grid">`;
+    [{k:'press',l:'Pressage'},{k:'label',l:'Labels'},{k:'inner',l:'Inner'},{k:'sleeve',l:'Sleeve'}].forEach(it=>{
+      const vals=inv7.map(d=>d.r[it.k]).filter(v=>v>0);
+      if(!vals.length)return;
+      h+=`<div class="rate-card"><div class="rate-label">${it.l}</div><div class="rate-val">${fpu(Math.min(...vals))}</div><div class="rate-eur">${epu(Math.min(...vals))}</div></div>`;
+    });
+    h+=`<div class="rate-card"><div class="rate-label">Mastering 7"</div><div class="rate-val">£160</div><div class="rate-eur">${fe(160)}</div></div>`;
+    h+=`<div class="rate-card"><div class="rate-label">Metalwork 7"</div><div class="rate-val">£100</div><div class="rate-eur">${fe(100)}</div></div>`;
+    h+='</div>';
+  }
+  h+=`<div class="slabel">Coûts fixes 12"</div><table><thead><tr><th class="l">Poste</th><th>£</th><th>€</th><th class="l">Note</th></tr></thead><tbody>
+  <tr><td class="l muted">Mastering DMM</td><td class="gbp">£212</td><td class="eur">${fe(212)}</td><td class="l muted">Constant</td></tr>
+  <tr><td class="l muted">Metalwork</td><td class="gbp">£159</td><td class="eur">${fe(159)}</td><td class="l muted">Constant</td></tr>
+  <tr><td class="l muted">Test Pressings ×5</td><td class="gbp">£25</td><td class="eur">${fe(25)}</td><td class="l muted">£5/u</td></tr>
+  <tr><td class="l muted">Livraison tests</td><td class="gbp">£35</td><td class="eur">${fe(35)}</td><td class="l muted">Parfois £0 si groupée</td></tr>
+  <tr><td class="l muted">Die-cut sleeve</td><td class="gbp">£400</td><td class="eur">${fe(400)}</td><td class="l muted" style="color:#7a5500;">Si pochette découpée</td></tr>
+  <tr><td class="l muted">Livraison marchandise</td><td class="gbp">£50 – £249</td><td class="eur">${fe(50)} – ${fe(249)}</td><td class="l muted">Selon destination et volume</td></tr>
+  <tr class="strong"><td class="l">Total fixes typique</td><td class="gbp">£431</td><td class="eur">${fe(431)}</td><td class="l muted">Master + metal + tests + livr. tests</td></tr>
+  </tbody></table>`;
+  document.getElementById('panel-rates').innerHTML=h;
+}
+
+// ── RELEASES ──
+function renderReleases(){
+  const rels=getReleases();
+  let h=`<table><thead><tr><th class="l">Cat. N°</th><th class="l">Titre</th><th>Fmt</th><th>Qté totale</th><th>Press/u £</th><th>Press/u €</th><th>Palier</th><th class="l">Docs</th></tr></thead><tbody>`;
+  rels.forEach(r=>{
+    const palier=r.press<=0.88?'A ≥1500':r.press===0.95?'7"':r.press<=0.97?'B 500–1499':r.press<=1.02?'B\' die-cut':'C ≤499';
+    const cls=r.press<=0.88?'g':r.press>=1.25?'r':'';
+    h+=`<tr><td class="l" style="font-weight:500;">${r.cat}</td><td class="l muted" style="font-size:11px;">${T(r.cat)||'—'}</td><td>${r.fmt}"</td><td style="font-weight:500;">${r.qty.toLocaleString()}</td><td class="${cls}">${fpu(r.press)}</td><td class="eur">${epu(r.press)}</td><td style="font-size:10px;">${palier}</td><td class="l muted" style="font-size:10px;">${r.refs.join(', ')}</td></tr>`;
+  });
+  h+='</tbody></table>';
+  const fixOnly=[...new Set(ALL.filter(d=>d.qty===0&&d.type==='inv').map(d=>d.cat))];
+  h+=`<p style="font-size:10px;color:#bbb;margin-top:12px;">Factures coûts fixes uniquement : ${fixOnly.map(c=>`${c}${T(c)?' ('+T(c)+')':''}`).join(' · ')}</p>`;
+  document.getElementById('panel-releases').innerHTML=h;
+}
+
+// ── FACTURES ──
+function renderInvoices(){
+  let h=`<table><thead><tr><th class="l">Réf.</th><th class="l">Cat.</th><th class="l">Titre</th><th>Date</th><th>Qté</th><th>Press/u</th><th>Total £</th><th>Total €</th></tr></thead><tbody>`;
+  ALL.forEach(d=>{
+    const tag=d.qty===0?'<span class="badge b-fx">Fixes</span>':d.fmt==='7'?'<span class="badge b-7">7"</span>':d.type==='quote'?'<span class="badge b-qt">Devis</span>':'<span class="badge b-inv">Facture</span>';
+    const dieTag=d.extra>0?'<span class="badge" style="background:#fff3cd;color:#7a5500;">die-cut</span>':'';
+    h+=`<tr><td class="l" style="font-weight:500;white-space:nowrap;">${d.ref}${tag}${dieTag}</td><td class="l" style="font-size:11px;">${d.cat}</td><td class="l muted" style="font-size:10px;">${T(d.cat)||'—'}</td><td style="font-size:10px;">${d.date||'—'}</td><td>${d.qty||'—'}</td><td>${d.r.press>0?fpu(d.r.press):'—'}</td><td class="gbp">${f2(d.total)}</td><td class="eur">${fe(d.total)}</td></tr>`;
+  });
+  h+='</tbody></table>';
+  document.getElementById('panel-invoices').innerHTML=h;
+}
+
+// ── IMPORT ──
+function renderImport(){
+  document.getElementById('panel-import').innerHTML=`
+  <p style="font-size:12px;color:#888;margin-bottom:16px;">Les doublons (même référence) sont ignorés automatiquement.</p>
+  <div class="import-grid">
+    <div class="import-field"><label>Réf.</label><input type="text" id="i-ref" placeholder="i28xxx"></div>
+    <div class="import-field"><label>Type</label><select id="i-type"><option value="inv">Facture</option><option value="quote">Devis</option></select></div>
+    <div class="import-field"><label>Date</label><input type="text" id="i-date" placeholder="MM/YYYY"></div>
+    <div class="import-field"><label>Format</label><select id="i-fmt"><option value="12">12"</option><option value="7">7"</option></select></div>
+    <div class="import-field"><label>Cat. N°</label><input type="text" id="i-cat" placeholder="CAPXXXLP"></div>
+    <div class="import-field" style="grid-column:span 2"><label>Titre</label><input type="text" id="i-title" placeholder="Artiste — Titre"></div>
+    <div class="import-field"><label>Quantité</label><input type="number" id="i-qty" placeholder="300"></div>
+  </div>
+  <div class="slabel">Tarifs unitaires (£/u)</div>
+  <div class="import-grid">
+    <div class="import-field"><label>Pressage</label><input type="number" id="c-press" step="0.01" placeholder="0.97"></div>
+    <div class="import-field"><label>Labels</label><input type="number" id="c-label" step="0.01" placeholder="0.20"></div>
+    <div class="import-field"><label>Inner</label><input type="number" id="c-inner" step="0.01" placeholder="0.50"></div>
+    <div class="import-field"><label>Sleeve</label><input type="number" id="c-sleeve" step="0.001" placeholder="0.83"></div>
+    <div class="import-field"><label>Packing</label><input type="number" id="c-pack" step="0.01" placeholder="0.05"></div>
+    <div class="import-field"><label>Shrink</label><input type="number" id="c-shrink" step="0.01" placeholder="0.14"></div>
+    <div class="import-field"><label>Energy</label><input type="number" id="c-energy" step="0.01" placeholder="0.08"></div>
+    <div class="import-field"><label>Varnish</label><input type="number" id="c-varnish" step="0.01" placeholder="0.05"></div>
+    <div class="import-field"><label>Sticker+appli</label><input type="number" id="c-sticker" step="0.01" placeholder="0.33"></div>
+  </div>
+  <div class="slabel">Coûts fixes (£)</div>
+  <div class="import-grid">
+    <div class="import-field"><label>Mastering</label><input type="number" id="f-master" step="1" placeholder="212"></div>
+    <div class="import-field"><label>Metalwork</label><input type="number" id="f-metal" step="1" placeholder="159"></div>
+    <div class="import-field"><label>Tests</label><input type="number" id="f-tests" step="1" placeholder="25"></div>
+    <div class="import-field"><label>Livr. tests</label><input type="number" id="f-testdel" step="1" placeholder="35"></div>
+    <div class="import-field"><label>Livr. march.</label><input type="number" id="f-delivery" step="1" placeholder="85"></div>
+    <div class="import-field"><label>Die-cut</label><input type="number" id="f-diecut" step="1" placeholder="0"></div>
+    <div class="import-field"><label>Total doc £</label><input type="number" id="c-total" step="0.01"></div>
+  </div>
+  <button class="add-btn" onclick="addDoc()">+ Ajouter</button>
+  <p class="msg" id="import-msg"></p>`;
+}
+
+function addDoc(){
+  const ref=document.getElementById('i-ref').value.trim()||('DOC-'+Date.now());
+  if(ALL.find(d=>d.ref===ref)){document.getElementById('import-msg').textContent='⚠ Doublon ignoré.';return;}
+  const gg=id=>parseFloat(document.getElementById(id).value)||0;
+  const d={ref,type:document.getElementById('i-type').value,date:document.getElementById('i-date').value||'',fmt:document.getElementById('i-fmt').value,cat:document.getElementById('i-cat').value||'—',qty:parseInt(document.getElementById('i-qty').value)||0,r:{press:gg('c-press'),label:gg('c-label'),inner:gg('c-inner'),sleeve:gg('c-sleeve'),pack:gg('c-pack')||0.05,shrink:gg('c-shrink')||0.14,energy:gg('c-energy')||0.08,varnish:gg('c-varnish'),sticker:gg('c-sticker')},f:{master:gg('f-master'),metal:gg('f-metal'),tests:gg('f-tests'),testDel:gg('f-testdel'),delivery:gg('f-delivery')},extra:gg('f-diecut'),total:gg('c-total')};
+  if(!d.total)d.total=varT(d)+fixT(d);
+  ALL.push(d);
+  document.getElementById('import-msg').textContent=`✓ ${ref} ajouté — ${d.qty} ex. · ${f2(d.total)}`;
+  sw('releases');
+}
+
+const PANELS=['sim','paliers','rates','releases','invoices','import'];
+const RENDER={sim:renderSim,paliers:renderPaliers,rates:renderRates,releases:renderReleases,invoices:renderInvoices,import:renderImport};
+function rerender(){
+  const on=document.querySelector('.tab.on');
+  if(!on)return;
+  const id=PANELS[[...document.querySelectorAll('.tab')].indexOf(on)];
+  if(id&&RENDER[id])RENDER[id]();
+}
+function sw(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  const idx=PANELS.indexOf(id);
+  document.querySelectorAll('.tab')[idx].classList.add('on');
+  document.getElementById('panel-'+id).classList.add('on');
+  if(RENDER[id])RENDER[id]();
+}
+
+document.getElementById('doc-count').textContent=ALL.length+' documents · '+ALL.filter(d=>d.type==='inv').length+' factures';
+renderSim();
+renderImport();
+fetchFx();
+</script>
