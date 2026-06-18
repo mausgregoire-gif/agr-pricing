@@ -217,19 +217,19 @@ const ALL=[
   // devis existants
   {ref:'AGRQ22769',type:'quote',date:'05/2026',fmt:'12',cat:'VE13LP',vinyl:'black',qty:300,r:{press:1.25,label:0.32,inner:0.08,sleeve:1.20,pack:0.05,shrink:0.15,energy:0.08,varnish:0,sticker:0.52,ovebag:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:90},extra:0,extraItems:[],total:1616},
   {ref:'AGRQ22770',type:'quote',date:'05/2026',fmt:'12',cat:'CAP155LP',vinyl:'black',qty:500,r:{press:1.02,label:0.22,inner:0.50,sleeve:1.20,pack:0.05,shrink:0.15,energy:0.08,varnish:0,sticker:0.52,ovebag:0},f:{master:212,metal:159,tests:25,testDel:35,delivery:130},extra:400,extraItems:['Die-cut sleeve £400'],total:2681},
-  // CAP164LP — vinyle coloré (devis juin 2026)
-  {ref:'AGRQ22794',type:'quote',date:'06/2026',fmt:'12',cat:'CAP164LP',vinyl:'color',qty:1000,
-   r:{press:1.55,label:0.158,inner:0.09,sleeve:0.6174,pack:0.055,shrink:0,energy:0.18,varnish:0,sticker:0.47,ovebag:0.23},
+  // CAP164LP — vinyle coloré gatefold (devis corrects juin 2026)
+  {ref:'AGRQ22794',type:'quote',date:'06/2026',fmt:'12',cat:'CAP164LP',vinyl:'color',sleeve_type:'gatefold',qty:1000,
+   r:{press:1.55,label:0.158,inner:0.09,sleeve:1.365,gatefold_glue:0.1365,pack:0.055,shrink:0,energy:0.18,varnish:0,sticker:0.47,ovebag:0.23},
    f:{master:0,metal:280,tests:25,testDel:35,delivery:230},
-   extra:200,extraItems:['Machine colour set up £100','Pantone surcharge sleeve £100'],total:4120.40},
-  {ref:'AGRQ22795',type:'quote',date:'06/2026',fmt:'12',cat:'CAP164LP',vinyl:'color',qty:1500,
-   r:{press:1.55,label:0.158,inner:0.09,sleeve:0.6174,pack:0.055,shrink:0,energy:0.18,varnish:0,sticker:0.40,ovebag:0.23},
+   extra:200,extraItems:['Machine colour set up £100','Pantone surcharge sleeve £100'],total:5004.50},
+  {ref:'AGRQ22795',type:'quote',date:'06/2026',fmt:'12',cat:'CAP164LP',vinyl:'color',sleeve_type:'gatefold',qty:1500,
+   r:{press:1.55,label:0.158,inner:0.09,sleeve:1.30,gatefold_glue:0.1365,pack:0.055,shrink:0,energy:0.18,varnish:0,sticker:0.40,ovebag:0.23},
    f:{master:0,metal:280,tests:25,testDel:35,delivery:345},
-   extra:200,extraItems:['Machine colour set up £100','Pantone surcharge sleeve £100'],total:5805.60},
-  {ref:'AGRQ22796',type:'quote',date:'06/2026',fmt:'12',cat:'CAP164LP',vinyl:'color',qty:2000,
-   r:{press:1.50,label:0.136,inner:0.09,sleeve:0.567,pack:0.055,shrink:0,energy:0.18,varnish:0,sticker:0.35,ovebag:0.23},
+   extra:200,extraItems:['Machine colour set up £100','Pantone surcharge sleeve £100'],total:7034.25},
+  {ref:'AGRQ22796',type:'quote',date:'06/2026',fmt:'12',cat:'CAP164LP',vinyl:'color',sleeve_type:'gatefold',qty:2000,
+   r:{press:1.50,label:0.136,inner:0.09,sleeve:1.102,gatefold_glue:0.1365,pack:0.055,shrink:0,energy:0.18,varnish:0,sticker:0.35,ovebag:0.23},
    f:{master:0,metal:280,tests:25,testDel:35,delivery:460},
-   extra:200,extraItems:['Machine colour set up £100','Pantone surcharge sleeve £100'],total:7216},
+   extra:200,extraItems:['Machine colour set up £100','Pantone surcharge sleeve £100'],total:8559},
 ];
 
 function varT(d){return Object.values(d.r).reduce((a,b)=>a+b,0)*d.qty;}
@@ -288,11 +288,17 @@ function renderSim(){
         </select></div>
       <div class="sim-field"><label>Pochette</label>
         <select id="s-sleeve" onchange="calcSim()">
-          <option value="0.83">350GSM matt — £0.83</option>
-          <option value="0.795">300GSM gloss — £0.795</option>
-          <option value="0.6174">350GSM gloss (coloré) — £0.617</option>
-          <option value="0.567">350GSM gloss (coloré 2000) — £0.567</option>
-          <option value="0.90">300GSM 7" — £0.90</option>
+          <option value="0.83">Simple 350GSM matt — £0.83</option>
+          <option value="0.795">Simple 300GSM gloss — £0.795</option>
+          <option value="0.90">Simple 300GSM 7" — £0.90</option>
+          <option value="1.365">Gatefold 350GSM (col. 1000) — £1.365</option>
+          <option value="1.30">Gatefold 350GSM (col. 1500) — £1.30</option>
+          <option value="1.102">Gatefold 350GSM (col. 2000) — £1.102</option>
+        </select></div>
+      <div class="sim-field"><label>Gatefold — rabat collé</label>
+        <select id="s-gatefold-glue" onchange="calcSim()">
+          <option value="0">Non / Simple sleeve</option>
+          <option value="0.1365">Oui — £0.1365/u</option>
         </select></div>
       <div class="sim-field"><label>Labels</label>
         <select id="s-label" onchange="calcSim()">
@@ -367,6 +373,7 @@ function calcSim(){
   const sticker=parseFloat(el('s-sticker').value)||0;
   const ovebag=parseFloat(el('s-ovebag').value)||0;
   const varnish=parseFloat(el('s-varnish').value)||0;
+  const gatefold_glue=parseFloat(el('s-gatefold-glue').value)||0;
   const diecut=parseFloat(el('s-diecut').value)||0;
   const pantone=parseFloat(el('s-pantone').value)||0;
   const colorsetup=parseFloat(el('s-colorsetup').value)||0;
@@ -377,7 +384,7 @@ function calcSim(){
   // Pour vinyle noir, energy standard = 0.08; pour coloré = 0.18 (déjà intègre surcharge)
   const energyActual=vinyl==='color'?energy:(0.08+war);
   const shrink=vinyl==='black'?0.14:0;
-  const pu=press+lbl+inner+sleeve+pack+shrink+energyActual+varnish+sticker+ovebag;
+  const pu=press+lbl+inner+sleeve+gatefold_glue+pack+shrink+energyActual+varnish+sticker+ovebag;
   const vt=pu*qty;
   const mf=fmt==='7'?160:212;
   const metalwork=fixedMode==='yes_lacquer'?280:159;
@@ -402,6 +409,7 @@ function calcSim(){
     ${diecut>0?`<span class="palier-tag" style="background:#fff3cd;color:#7a5500;">+ die-cut £400</span>`:''}
     ${pantone>0?`<span class="palier-tag" style="background:#fff3cd;color:#7a5500;">+ Pantone sleeve £100</span>`:''}
     ${colorsetup>0?`<span class="palier-tag" style="background:#f3e8ff;color:#6b21a8;">+ colour set up £100</span>`:''}
+    ${gatefold_glue>0?`<span class="palier-tag" style="background:#f3e8ff;color:#6b21a8;">+ gatefold collé £0.1365/u</span>`:''}
     ${war>0&&vinyl==='black'?`<span class="palier-tag" style="background:#fff3cd;color:#7a5500;">+ surcharge guerre £0.09/u</span>`:''}
   </div>
   ${isColor?`<p style="font-size:11px;color:#6b21a8;margin-bottom:12px;">⚠ Vinyle coloré : metalwork from supplied lacquers (£280 vs £159), machine colour set up (£100), energy surcharge déjà à £0.18/u dans les devis.</p>`:''}
